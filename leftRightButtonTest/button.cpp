@@ -14,4 +14,16 @@ bool Button::isPressed() {
     state = 0;
     return false;
   }
+
+//  if (digitalRead(pin) == HIGH && state == 1) {
+//    state = 0;
+//    return false;
+//  } else {
+//    state = 1;
+//    return true;
+//  }
+}
+
+int Button::getState() {
+  return state;
 }

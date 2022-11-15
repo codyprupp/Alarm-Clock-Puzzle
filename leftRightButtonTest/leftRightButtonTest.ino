@@ -1,7 +1,7 @@
 #include "LedControl.h"
 #include "button.h"
-#define LEFT_BUTTON_PIN 12
-#define RIGHT_BUTTON_PIN 8
+#define LEFT_BUTTON_PIN 4
+#define RIGHT_BUTTON_PIN 5
 //#define UP_BUTTON_PIN
 //#define DOWN_BUTTON_PIN
 //#define A_BUTTON_PIN
@@ -36,6 +36,9 @@ void loop() {
   lc.setColumn(currDisplay,0,B11111111);
   lc.setColumn(currDisplay,7,B11111111);
   lc.setRow(currDisplay,7,B11111111);
+
+  Serial.println(leftButton.getState());
+  Serial.println(digitalRead(LEFT_BUTTON_PIN));
   
   if (leftButton.isPressed()) {
     Serial.println("left button has been pressed");
