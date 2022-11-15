@@ -36,9 +36,6 @@ void loop() {
   lc.setColumn(currDisplay,0,B11111111);
   lc.setColumn(currDisplay,7,B11111111);
   lc.setRow(currDisplay,7,B11111111);
-
-  Serial.println(leftButton.getState());
-  Serial.println(digitalRead(LEFT_BUTTON_PIN));
   
   if (leftButton.isPressed()) {
     Serial.println("left button has been pressed");

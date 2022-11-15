@@ -7,21 +7,17 @@ Button::Button(int pin) {
 }
 
 bool Button::isPressed() {
+  if (digitalRead(pin) == HIGH) {
+    state = 0;
+    return false;
+  }
+  
   if (digitalRead(pin) == LOW && state == 0) {
     state = 1;
     return true;
   } else {
-    state = 0;
     return false;
   }
-
-//  if (digitalRead(pin) == HIGH && state == 1) {
-//    state = 0;
-//    return false;
-//  } else {
-//    state = 1;
-//    return true;
-//  }
 }
 
 int Button::getState() {
