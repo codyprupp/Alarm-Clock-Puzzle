@@ -12,12 +12,12 @@
 #define CS_PIN 3
 #define DIN_PIN 11
 #define CLK_PIN 13
-#define leftButtonPin 4
-#define rightButtonPin 5
-#define upButtonPin 6
-#define downButtonPin 7
-#define alarmButtonPin 8
-#define clockButtonPin 9
+#define MINUTE_ADD_PIN 4
+#define MINUTE_SUB_PIN 5
+#define HOUR_ADD_PIN 6
+#define HOUR_SUB_PIN 7
+#define ALARM_SET_PIN 8
+#define CLOCK_SET_PIN 9
 
 // Create a new instance of the MD_Parola class with hardware SPI connection:
 MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
@@ -32,15 +32,22 @@ unsigned long interval = 1000UL;
 int seconds = 0;
 int minutes = 0;
 int hours = 0;
-String secString = String();
 String minString = String();
+String hourString = String();
 String timeString = String();
+
+int tempMinutes = 0;
+int tempHours = 0;
+String tempMinString = String(tempMinutes);
+String tempHourString = String(tempHours);
+String tempTimeString = String("00:00");
 
 enum mode {ALARM_SET, CLOCK_SET, CLOCK, GAME};
 int currMode = CLOCK;
 
-Button leftButton(leftButtonPin);
-Button rightButton(rightButtonPin);
+Button minuteAddButton(MINUTE_ADD_PIN);
+Button minuteSubButton(MINUTE_SUB_PIN);
+Button clockSetButton(CLOCK_SET_PIN);
 
 
 void updateTime() {
@@ -49,20 +56,54 @@ void updateTime() {
     minutes++;
     seconds = 0;
   }
+  if (minutes > 59) {
+    hours++;
+    minutes = 0;
+  }
+  if (hours > 23) {
+    hours = 0;
+  }
 }
 
 void updateTimeString() {
-    secString = String(seconds);
-    minString = String(minutes);
+  hourString = String(hours);
+  minString = String(minutes);
 
-    if (seconds < 10) {
-      secString = String("0" + secString);
-    }
-    
-    if (minutes < 10) {
-      minString = String("0" + minString);
-    }
-    timeString = String(minString + ":" + secString);
+  if (hours < 10) {
+    hourString = String("0" + hourString);
+  }
+  
+  if (minutes < 10) {
+    minString = String("0" + minString);
+  }
+  timeString = String(hourString + ":" + minString);
+}
+
+void updateTempString() {
+  tempMinString = String(tempMinutes);
+  tempHourString = String(tempHours);
+
+  if (tempMinutes < 10) {
+    tempMinString = String("0" + tempMinString);
+  }
+  if (tempHours < 10) {
+    tempHourString = String("0" + tempHourString);
+  }
+  tempTimeString = String(tempHourString + ":" + tempMinString);
+}
+
+void incrementMinutes() {
+  tempMinutes++;
+  if (tempMinutes > 59) {
+    tempMinutes = 0;
+  }
+}
+
+void decrementMinutes() {
+  tempMinutes--;
+  if (tempMinutes < 0) {
+    tempMinutes = 59;
+  }
 }
 
 void setup() {
@@ -89,15 +130,24 @@ void loop() {
   switch (currMode) {
     case CLOCK:
       myDisplay.print(timeString);
-      if(leftButton.isPressed()) {
+      if (clockSetButton.isPressed()) {
         currMode = CLOCK_SET;
       }
       break;
     case CLOCK_SET:
-      myDisplay.print("SET");
-      if(leftButton.isPressed()) {
+      myDisplay.print(tempTimeString);
+      if (clockSetButton.isPressed()) {
         currMode = CLOCK;
       }
+      if (minuteAddButton.isPressed()) {
+        incrementMinutes();
+        updateTempString();
+      }
+      if (minuteSubButton.isPressed()) {
+        decrementMinutes();
+        updateTempString();
+      }
+
       break;
   }
   
