@@ -12,8 +12,8 @@
 #define CS_PIN 3
 #define DIN_PIN 11
 #define CLK_PIN 13
-#define MINUTE_ADD_PIN 4
-#define MINUTE_SUB_PIN 5
+#define MINUTE_ADD_PIN 5
+#define MINUTE_SUB_PIN 4
 #define HOUR_ADD_PIN 6
 #define HOUR_SUB_PIN 7
 #define ALARM_SET_PIN 8
@@ -26,6 +26,9 @@ MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 // #define DATAPIN 2
 // #define CLK_PIN 4
 // MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
+
+bool intensity = HIGH;
+bool alarmIsSet = false;
 
 unsigned long previousMillis = 0UL;
 unsigned long interval = 1000UL;
@@ -42,12 +45,21 @@ String tempMinString = String(tempMinutes);
 String tempHourString = String(tempHours);
 String tempTimeString = String("00:00");
 
+int alarmMinutes = 0;
+int alarmHours = 0;
+
+int currColor = 0;
+int index = 0;
+
 enum mode {ALARM_SET, CLOCK_SET, CLOCK, GAME};
 int currMode = CLOCK;
 
 Button minuteAddButton(MINUTE_ADD_PIN);
 Button minuteSubButton(MINUTE_SUB_PIN);
 Button clockSetButton(CLOCK_SET_PIN);
+Button hourAddButton(HOUR_ADD_PIN);
+Button hourSubButton(HOUR_SUB_PIN);
+Button alarmSetButton(ALARM_SET_PIN);
 
 
 void updateTime() {
@@ -106,6 +118,20 @@ void decrementMinutes() {
   }
 }
 
+void incrementHours() {
+  tempHours++;
+  if (tempHours > 23) {
+    tempHours = 0;
+  }
+}
+
+void decrementHours() {
+  tempHours--;
+  if (tempHours < 0) {
+    tempHours = 23;
+  }
+}
+
 void setup() {
   // Intialize the object:
   myDisplay.begin();
@@ -118,6 +144,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(alarmIsSet);
   myDisplay.setTextAlignment(PA_CENTER);
   unsigned long currentMillis = millis();
 
@@ -125,18 +152,90 @@ void loop() {
     updateTime();
     updateTimeString();
     previousMillis = currentMillis;
+//
+//    if (currMode == CLOCK_SET) {
+//      if (intensity == HIGH) {
+//        myDisplay.setIntensity(0);
+//        intensity = LOW;
+//      } else {
+//        myDisplay.setIntensity(15);
+//        intensity = HIGH;
+//      }
+//    } 
+//    else if (currMode == ALARM_SET) {
+//      if (intensity == HIGH) {
+//        myDisplay.setInvert(intensity);
+//        intensity = LOW;
+//      } else {
+//        myDisplay.setInvert(intensity);
+//        intensity = HIGH;
+//      }
+//    }
   }
 
   switch (currMode) {
     case CLOCK:
+      myDisplay.setIntensity(6);
       myDisplay.print(timeString);
       if (clockSetButton.isPressed()) {
         currMode = CLOCK_SET;
+        tempMinutes = 0;
+        tempHours = 0;
+        updateTempString();
       }
+
+      if (hours == alarmHours && minutes == alarmMinutes && alarmIsSet) {
+        index = 0;
+        currMode = GAME;
+      }
+
+      if (alarmSetButton.isPressed()) {
+        currMode = ALARM_SET;
+        tempMinutes = 0;
+        tempHours = 0;
+        updateTempString();
+      }
+      
       break;
     case CLOCK_SET:
-      myDisplay.print(tempTimeString);
+      myDisplay.print("C" + tempTimeString);
       if (clockSetButton.isPressed()) {
+        currMode = CLOCK;
+        minutes = tempMinutes;
+        hours = tempHours;
+        seconds = 0;
+        updateTimeString();
+      }
+      if (minuteAddButton.isPressed()) {
+        incrementMinutes();
+        updateTempString();
+      }
+      if (minuteSubButton.isPressed()) {
+        decrementMinutes();
+        updateTempString();
+      }
+
+      if (hourAddButton.isPressed()) {
+        incrementHours();
+        updateTempString();
+      }
+
+      if (hourSubButton.isPressed()) {
+        decrementHours();
+        updateTempString();
+      }
+
+      if (alarmSetButton.isPressed()) {
+        currMode = CLOCK;
+      }
+      
+      break;
+    case ALARM_SET:
+      myDisplay.print("A" + tempTimeString);
+      if (alarmSetButton.isPressed()) {
+        alarmMinutes = tempMinutes;
+        alarmHours = tempHours;
+        alarmIsSet = true;
         currMode = CLOCK;
       }
       if (minuteAddButton.isPressed()) {
@@ -148,7 +247,62 @@ void loop() {
         updateTempString();
       }
 
+      if (hourAddButton.isPressed()) {
+        incrementHours();
+        updateTempString();
+      }
+
+      if (hourSubButton.isPressed()) {
+        decrementHours();
+        updateTempString();
+      }
+
+      if (clockSetButton.isPressed()) {
+        currMode = CLOCK;
+      }
+
+      break;
+    case GAME:
+
+      enum buttonColors {RED, BLACK, YELLOW, BLUE};
+
+      int pressOrder[] = {0, 1, 2, 3};
+
+      currColor = pressOrder[index];
+
+      if (index > 3) {
+        Serial.println("in game");
+        alarmIsSet = false;
+        currMode = CLOCK;
+        break;
+      }
+
+      if (currColor == 0) {
+        myDisplay.print("Red");
+        if (hourSubButton.isPressed()) {
+          index++;
+          currColor = pressOrder[index];
+        }
+      } else if (currColor == 1) {
+        myDisplay.print("Black");
+        if (hourAddButton.isPressed()) {
+          index++;
+          currColor = pressOrder[index];
+        }
+      } else if (currColor == 2) {
+        myDisplay.print("Yellow");
+        if (minuteSubButton.isPressed()) {
+          index++;
+          currColor = pressOrder[index];
+        }
+      } else if (currColor == 3) {
+        myDisplay.print("Blue");
+        if (minuteAddButton.isPressed()) {
+          index++;
+          currColor = pressOrder[index];
+        }
+      }
+
       break;
   }
-  
 }
