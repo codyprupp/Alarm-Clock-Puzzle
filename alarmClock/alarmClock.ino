@@ -18,6 +18,7 @@
 #define HOUR_SUB_PIN 7
 #define ALARM_SET_PIN 8
 #define CLOCK_SET_PIN 9
+#define BUZZER_PIN 2
 
 // Create a new instance of the MD_Parola class with hardware SPI connection:
 MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
@@ -140,6 +141,8 @@ void setup() {
   // Clear the display:
   myDisplay.displayClear();
 
+  pinMode(BUZZER_PIN, OUTPUT);
+
   Serial.begin(9600);
 }
 
@@ -183,9 +186,10 @@ void loop() {
         tempHours = 0;
         updateTempString();
       }
-
+      
       if (hours == alarmHours && minutes == alarmMinutes && alarmIsSet) {
         index = 0;
+        digitalWrite(BUZZER_PIN, HIGH);
         currMode = GAME;
       }
 
@@ -273,6 +277,7 @@ void loop() {
       if (index > 3) {
         Serial.println("in game");
         alarmIsSet = false;
+        digitalWrite(BUZZER_PIN, LOW);
         currMode = CLOCK;
         break;
       }
