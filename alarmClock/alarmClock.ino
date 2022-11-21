@@ -1,6 +1,3 @@
-/* Basic example code for MAX7219 LED dot matrix display with Arduino. More info: https://www.makerguides.com */
-
-// Include the required Arduino libraries:
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 #include <SPI.h>
@@ -48,7 +45,7 @@ int tempHours = 0;
 String tempMinString = String(tempMinutes);
 String tempHourString = String(tempHours);
 String tempTimeString = String("00:00");
-enum selection = {MIN, HOUR};
+enum selection {MIN, HOUR};
 
 // Variables to keep track of set Alarm
 int alarmMinutes = 0;
@@ -152,34 +149,6 @@ void decrement(int num) {
   }
 }
 
-// void incrementMinutes() {
-//   tempMinutes++;
-//   if (tempMinutes > 59) {
-//     tempMinutes = 0;
-//   }
-// }
-
-// void decrementMinutes() {
-//   tempMinutes--;
-//   if (tempMinutes < 0) {
-//     tempMinutes = 59;
-//   }
-// }
-
-// void incrementHours() {
-//   tempHours++;
-//   if (tempHours > 23) {
-//     tempHours = 0;
-//   }
-// }
-
-// void decrementHours() {
-//   tempHours--;
-//   if (tempHours < 0) {
-//     tempHours = 23;
-//   }
-// }
-
 void setup() {
   // Intialize the object:
   myDisplay.begin();
@@ -202,25 +171,7 @@ void loop() {
     updateTime();
     updateTimeString();
     previousMillis = currentMillis;
-//
-//    if (currMode == CLOCK_SET) {
-//      if (intensity == HIGH) {
-//        myDisplay.setIntensity(0);
-//        intensity = LOW;
-//      } else {
-//        myDisplay.setIntensity(15);
-//        intensity = HIGH;
-//      }
-//    } 
-//    else if (currMode == ALARM_SET) {
-//      if (intensity == HIGH) {
-//        myDisplay.setInvert(intensity);
-//        intensity = LOW;
-//      } else {
-//        myDisplay.setInvert(intensity);
-//        intensity = HIGH;
-//      }
-//    }
+
   }
 
   switch (currMode) {
@@ -294,21 +245,21 @@ void loop() {
         currMode = CLOCK;
       }
       if (minuteAddButton.isPressed()) {
-        incrementMinutes();
+        increment(MIN);
         updateTempString();
       }
       if (minuteSubButton.isPressed()) {
-        decrementMinutes();
+        decrement(MIN);
         updateTempString();
       }
 
       if (hourAddButton.isPressed()) {
-        incrementHours();
+        increment(HOUR);
         updateTempString();
       }
 
       if (hourSubButton.isPressed()) {
-        decrementHours();
+        decrement(HOUR);
         updateTempString();
       }
 
