@@ -26,6 +26,22 @@
 MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
 // Variables for time-keeping
+// Setup for software SPI:
+// #define DATAPIN 2
+// #define CLK_PIN 4
+// MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
+
+bool intensity = HIGH;
+bool alarmIsSet = false;
+
+long randNum;
+
+unsigned long currTime;
+
+// replace w/ random number for random size generation
+int numButtonsToPress = random(8, 12);
+int pressOrder[12];
+
 unsigned long previousMillis = 0UL;
 unsigned long interval = 1000UL;
 int seconds = 0;
@@ -230,6 +246,10 @@ void loop() {
       if (hours == alarmHours && minutes == alarmMinutes && alarmIsSet) {
         index = 0;
         digitalWrite(BUZZER_PIN, HIGH);
+        for (int i = 0; i < numButtonsToPress - 1; i++) {
+          pressOrder[i] = random(3);
+        }
+        currTime = currentMillis;
         currMode = GAME;
       }
 
@@ -310,41 +330,60 @@ void loop() {
 
       enum buttonColors {RED, BLACK, YELLOW, BLUE};
 
-      int pressOrder[] = {0, 1, 2, 3};
-
       currColor = pressOrder[index];
 
-      if (index > 3) {
+      if (index > numButtonsToPress - 1) {
         Serial.println("in game");
         alarmIsSet = false;
         digitalWrite(BUZZER_PIN, LOW);
+        numButtonsToPress = random(4, 8);
         currMode = CLOCK;
         break;
       }
 
       if (currColor == 0) {
-        myDisplay.print("Red");
+        if (currentMillis - currTime < 250) {
+          myDisplay.displayClear();
+        } else {
+          myDisplay.print("Red");
+        }
         if (hourSubButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
+          currTime = currentMillis;
         }
       } else if (currColor == 1) {
-        myDisplay.print("Black");
+        if (currentMillis - currTime < 250) {
+          myDisplay.displayClear();
+        } else {
+          myDisplay.print("Black");
+        }
         if (hourAddButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
+          currTime = currentMillis;
         }
       } else if (currColor == 2) {
-        myDisplay.print("Yellow");
+        if (currentMillis - currTime < 250) {
+          myDisplay.displayClear();
+        } else {
+          myDisplay.print("Yellow");
+        }
         if (minuteSubButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
+          currTime = currentMillis;
         }
       } else if (currColor == 3) {
-        myDisplay.print("Blue");
+        if (currentMillis - currTime < 250) {
+          myDisplay.displayClear();
+        } else {
+          myDisplay.print("Blue");
+        }
         if (minuteAddButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
+          currTime = currentMillis;
         }
       }
 
