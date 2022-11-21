@@ -25,23 +25,14 @@
 // Create a new instance of the MD_Parola class with hardware SPI connection:
 MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
-// Variables for time-keeping
-// Setup for software SPI:
-// #define DATAPIN 2
-// #define CLK_PIN 4
-// MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
-
-bool intensity = HIGH;
-bool alarmIsSet = false;
-
 long randNum;
-
 unsigned long currTime;
 
 // replace w/ random number for random size generation
 int numButtonsToPress = random(8, 12);
 int pressOrder[12];
 
+// Variables for time-keeping
 unsigned long previousMillis = 0UL;
 unsigned long interval = 1000UL;
 int seconds = 0;
