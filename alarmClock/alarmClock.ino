@@ -12,6 +12,8 @@
 #define CS_PIN 3
 #define DIN_PIN 11
 #define CLK_PIN 13
+
+// Define Button Pins and Buzzer Pin
 #define MINUTE_ADD_PIN 5
 #define MINUTE_SUB_PIN 4
 #define HOUR_ADD_PIN 6
@@ -23,14 +25,7 @@
 // Create a new instance of the MD_Parola class with hardware SPI connection:
 MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
-// Setup for software SPI:
-// #define DATAPIN 2
-// #define CLK_PIN 4
-// MD_Parola myDisplay = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
-
-bool intensity = HIGH;
-bool alarmIsSet = false;
-
+// Variables for time-keeping
 unsigned long previousMillis = 0UL;
 unsigned long interval = 1000UL;
 int seconds = 0;
@@ -40,21 +35,28 @@ String minString = String();
 String hourString = String();
 String timeString = String();
 
+// Variables to manipulate when setting Clock and Alarm
 int tempMinutes = 0;
 int tempHours = 0;
 String tempMinString = String(tempMinutes);
 String tempHourString = String(tempHours);
 String tempTimeString = String("00:00");
+enum selection = {MIN, HOUR};
 
+// Variables to keep track of set Alarm
 int alarmMinutes = 0;
 int alarmHours = 0;
+bool alarmIsSet = false;
 
+// Variables for Game progression
 int currColor = 0;
 int index = 0;
 
+// Sets up system to keep track of the mode
 enum mode {ALARM_SET, CLOCK_SET, CLOCK, GAME};
 int currMode = CLOCK;
 
+// Initialize button objects
 Button minuteAddButton(MINUTE_ADD_PIN);
 Button minuteSubButton(MINUTE_SUB_PIN);
 Button clockSetButton(CLOCK_SET_PIN);
@@ -62,7 +64,7 @@ Button hourAddButton(HOUR_ADD_PIN);
 Button hourSubButton(HOUR_SUB_PIN);
 Button alarmSetButton(ALARM_SET_PIN);
 
-
+// Updates seconds, minutes, and hours in clock format
 void updateTime() {
   seconds++;
   if (seconds > 59) {
@@ -78,6 +80,7 @@ void updateTime() {
   }
 }
 
+// Updates the Time String for the Display
 void updateTimeString() {
   hourString = String(hours);
   minString = String(minutes);
@@ -92,6 +95,7 @@ void updateTimeString() {
   timeString = String(hourString + ":" + minString);
 }
 
+// Updates the Temp Time String for Setting Alarm and Clock
 void updateTempString() {
   tempMinString = String(tempMinutes);
   tempHourString = String(tempHours);
@@ -105,33 +109,69 @@ void updateTempString() {
   tempTimeString = String(tempHourString + ":" + tempMinString);
 }
 
-void incrementMinutes() {
-  tempMinutes++;
-  if (tempMinutes > 59) {
-    tempMinutes = 0;
+// Increments minutes or hours based on received parameter
+void increment(int num) {
+  switch (num) {
+    case MIN:
+      tempMinutes++;
+      if (tempMinutes > 59) {
+        tempMinutes = 0;
+      }
+      break;
+    case HOUR:
+      tempHours++;
+      if (tempHours > 23) {
+        tempHours = 0;
+      }
+      break;
   }
 }
 
-void decrementMinutes() {
-  tempMinutes--;
-  if (tempMinutes < 0) {
-    tempMinutes = 59;
+// Decrements minutes or hours based on received parameter
+void decrement(int num) {
+  switch (num) {
+    case MIN:
+      tempMinutes--;
+      if (tempMinutes < 0) {
+        tempMinutes = 59;
+      }
+      break;
+    case HOUR:
+      tempHours--;
+      if (tempHours < 0) {
+        tempHours = 23;
+      }
+      break;
   }
 }
 
-void incrementHours() {
-  tempHours++;
-  if (tempHours > 23) {
-    tempHours = 0;
-  }
-}
+// void incrementMinutes() {
+//   tempMinutes++;
+//   if (tempMinutes > 59) {
+//     tempMinutes = 0;
+//   }
+// }
 
-void decrementHours() {
-  tempHours--;
-  if (tempHours < 0) {
-    tempHours = 23;
-  }
-}
+// void decrementMinutes() {
+//   tempMinutes--;
+//   if (tempMinutes < 0) {
+//     tempMinutes = 59;
+//   }
+// }
+
+// void incrementHours() {
+//   tempHours++;
+//   if (tempHours > 23) {
+//     tempHours = 0;
+//   }
+// }
+
+// void decrementHours() {
+//   tempHours--;
+//   if (tempHours < 0) {
+//     tempHours = 23;
+//   }
+// }
 
 void setup() {
   // Intialize the object:
@@ -211,21 +251,21 @@ void loop() {
         updateTimeString();
       }
       if (minuteAddButton.isPressed()) {
-        incrementMinutes();
+        increment(MIN);
         updateTempString();
       }
       if (minuteSubButton.isPressed()) {
-        decrementMinutes();
+        decrement(MIN);
         updateTempString();
       }
 
       if (hourAddButton.isPressed()) {
-        incrementHours();
+        increment(HOUR);
         updateTempString();
       }
 
       if (hourSubButton.isPressed()) {
-        decrementHours();
+        decrement(HOUR);
         updateTempString();
       }
 
