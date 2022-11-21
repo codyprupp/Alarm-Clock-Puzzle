@@ -17,3 +17,9 @@ User Testimonials:
 \- You, probably
 
 (end of user testimonials)
+
+# User Instructions
+
+There are 6 buttons of varying colors. On the right, there are 2 white buttons for setting the clock time (left) and setting the alarm time (right). On the left, there are 4 buttons that have the following functionalities (left-to-right, respectively): the red button will decrement the hours displayed on the clock or alarm time when in a setting mode, the black button increments the hours displayed when in a setting mode, the yellow button decrements the minutes displayed in a setting mode, and finally the blue button increments the minutes displayed in a setting mode. 
+
+To set the clock time, press the clock set button once, use the left 4 buttons to adjust the time as desired, and then press the clock set button once again to confirm the changes (or press the alarm set button to cancel the changes). Similarly, to set the alarm time, press the alarm set button, use the left 4 buttons to adjust the time as desired, and then press the alarm set button again to confirm the changes (or press the clock set button to cancel the changes). Please note that you will have to re-set the alarm each time after it goes off.
