@@ -289,7 +289,7 @@ void loop() {
         } else {
           myDisplay.print("Red");
         }
-        if (hourSubButton.isPressed()) {
+        if (hourAddButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
           currTime = currentMillis;
@@ -300,7 +300,7 @@ void loop() {
         } else {
           myDisplay.print("Black");
         }
-        if (hourAddButton.isPressed()) {
+        if (hourSubButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
           currTime = currentMillis;
@@ -311,7 +311,7 @@ void loop() {
         } else {
           myDisplay.print("Yellow");
         }
-        if (minuteSubButton.isPressed()) {
+        if (minuteAddButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
           currTime = currentMillis;
@@ -322,7 +322,7 @@ void loop() {
         } else {
           myDisplay.print("Blue");
         }
-        if (minuteAddButton.isPressed()) {
+        if (minuteSubButton.isPressed()) {
           index++;
           currColor = pressOrder[index];
           currTime = currentMillis;
