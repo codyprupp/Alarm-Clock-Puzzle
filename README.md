@@ -1,6 +1,6 @@
 # Alarm-Clock-Puzzle
 
-This code was written for IEEE @ UCSD's Fall 2022 Quarterly Projects competition. We got 2nd place out of 30 teams!
+###### *This code was written for IEEE @ UCSD's Fall 2022 Quarterly Projects competition. We got 2nd place out of 30 teams!*
 
 Have you ever found yourself subconsciously pressing the snooze button for your alarm after it goes off over and over again, effectively defeating the purpose of the alarm?
 
